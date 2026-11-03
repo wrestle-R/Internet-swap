@@ -2,7 +2,7 @@
 
 A small Wi-Fi companion for Linux, coz I’d rather leave things running than keep checking the connection.
 
-[Get the app](https://github.com/wrestle-R/Internet-swap/releases/tag/v0.1.1) · [Website](https://internet-swap.vercel.app) · [Releases](https://github.com/wrestle-R/Internet-swap/releases)
+[Get the app](https://github.com/wrestle-R/Internet-swap/releases/tag/v0.1.2) · [Website](https://internet-swap.vercel.app) · [Releases](https://github.com/wrestle-R/Internet-swap/releases)
 
 I recently found that the 2.4 GHz and 5 GHz networks I use gave me different speeds. In a few short tests, 2.4 GHz had slightly better download and 5 GHz had better upload. That’s an observation from my setup, not a rule about either band.
 

@@ -7,6 +7,8 @@ import sys,os,json,pathlib,time
 p=pathlib.Path(os.environ['SIM_ROOT']);a=sys.argv[1:];tool=pathlib.Path(sys.argv[0]).name
 assert 'LD_LIBRARY_PATH' not in os.environ, 'AppImage libraries leaked into host tools'
 assert 'LD_PRELOAD' not in os.environ
+assert 'PYTHONHOME' not in os.environ
+assert 'PYTHONPATH' not in os.environ
 assert not any(x.startswith(os.environ['APPDIR']) for x in os.environ['PATH'].split(':'))
 active=p.joinpath('active').read_text().strip()
 with p.joinpath('calls').open('a') as f:f.write(tool+' '+repr(a)+'\n')
@@ -38,7 +40,7 @@ class Integration(unittest.TestCase):
   for name in ['nmcli','curl']:
    f=self.bin/name;f.write_text(FAKE);f.chmod(0o755)
   for name,value in [('active','a'),('fail',''),('calls','')]: (self.root/name).write_text(value)
-  self.env={**os.environ,'XDG_CONFIG_HOME':str(self.config),'XDG_RUNTIME_DIR':str(self.runtime),'SIM_ROOT':str(self.root),'PATH':str(self.root/'bundle/usr/bin')+':'+str(self.bin)+':'+os.environ['PATH'],'APPDIR':str(self.root/'bundle'),'LD_LIBRARY_PATH':str(self.root/'bundle/usr/lib')}
+  self.env={**os.environ,'XDG_CONFIG_HOME':str(self.config),'XDG_RUNTIME_DIR':str(self.runtime),'SIM_ROOT':str(self.root),'PATH':str(self.root/'bundle/usr/bin')+':'+str(self.bin)+':'+os.environ['PATH'],'APPDIR':str(self.root/'bundle'),'LD_LIBRARY_PATH':str(self.root/'bundle/usr/lib'),'PYTHONHOME':str(self.root/'bundle/usr'),'PYTHONPATH':str(self.root/'bundle/usr/share/pyshared')}
   self.process=None;self.start()
  def start(self):
   self.process=subprocess.Popen([str(BINARY),'--daemon'],env=self.env,stderr=subprocess.PIPE)

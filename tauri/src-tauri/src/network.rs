@@ -14,6 +14,11 @@ pub fn host_command(program: &str) -> Command {
         "GIO_EXTRA_MODULES",
         "GDK_PIXBUF_MODULE_FILE",
         "GI_TYPELIB_PATH",
+        "PYTHONHOME",
+        "PYTHONPATH",
+        "PERL5LIB",
+        "QT_PLUGIN_PATH",
+        "QT_QPA_PLATFORM_PLUGIN_PATH",
     ] {
         command.env_remove(key);
     }

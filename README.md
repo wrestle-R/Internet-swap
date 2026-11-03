@@ -4,6 +4,10 @@ A small Wi-Fi companion for Linux, coz I’d rather leave things running than ke
 
 [Get the app](https://github.com/wrestle-R/Internet-swap/releases/tag/v0.1.2) · [Website](https://internet-swap.vercel.app) · [Releases](https://github.com/wrestle-R/Internet-swap/releases)
 
+![Internet Swap in Plum dark, with example networks and measurements](tauri/screenshots/plum-dark.jpg)
+
+*Plum dark appearance. Example networks and measurements shown.*
+
 I recently found that the 2.4 GHz and 5 GHz networks I use gave me different speeds. In a few short tests, 2.4 GHz had slightly better download and 5 GHz had better upload. That’s an observation from my setup, not a rule about either band.
 
 Internet Swap watches saved, secured Wi-Fi networks that are currently available. It uses recent speed measurements to look for a better connection and repeated internet checks to detect trouble. A cooldown limits repeated switches, and a failed candidate connection attempts to restore the previous Wi-Fi.

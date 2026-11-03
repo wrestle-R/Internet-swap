@@ -62,8 +62,8 @@ nav > a:last-child {
   display: grid;
   grid-template-columns: 1.05fr 1fr;
   gap: 90px;
-  align-items: center;
-  padding: 83px 0 88px;
+  align-items: start;
+  padding: 60px 0 88px;
 }
 .eyebrow,
 .section-label {

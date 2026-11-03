@@ -1,0 +1,1 @@
+try { document.documentElement.dataset.mode = localStorage.getItem('internet-swap-mode') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch { document.documentElement.dataset.mode = 'dark'; }

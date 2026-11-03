@@ -1,0 +1,17 @@
+/local-docs/
+**/node_modules/
+**/target/
+**/dist/
+**/.next/
+**/out/
+.vercel/
+**/.vercel/
+.env
+.env.*
+!.env.example
+
+# Generated checks and release assets
+**/__pycache__/
+*.py[cod]
+**/*.tsbuildinfo
+/release/assets/

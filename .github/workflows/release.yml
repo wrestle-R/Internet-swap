@@ -1,0 +1,51 @@
+name: Release
+on:
+  push:
+    tags: ["v*.*.*"]
+permissions:
+  contents: write
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tauri/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tauri/src-tauri
+      - name: Validate release versions
+        run: node scripts/check-version.mjs "$GITHUB_REF_NAME"
+      - name: Install desktop libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf libfuse2
+      - run: npm ci --prefix tauri
+      - run: cargo test --locked --manifest-path tauri/src-tauri/Cargo.toml
+      - run: cargo build --locked --no-default-features --manifest-path tauri/src-tauri/Cargo.toml
+      - run: python3 tauri/tests/daemon_integration.py tauri/src-tauri/target/debug/internet-swap
+      - name: Build AppImage and Debian package
+        working-directory: tauri
+        run: npm run tauri -- build --bundles appimage,deb
+      - name: Stage downloads and checksums
+        run: |
+          mkdir -p release/assets
+          cp tauri/src-tauri/target/release/bundle/appimage/*.AppImage release/assets/Internet-Swap_${GITHUB_REF_NAME#v}_amd64.AppImage
+          cp tauri/src-tauri/target/release/bundle/deb/*.deb release/assets/Internet-Swap_${GITHUB_REF_NAME#v}_amd64.deb
+          cd release/assets
+          sha256sum *.AppImage *.deb > SHA256SUMS
+      - name: Verify packaged headless service starts
+        run: |
+          chmod +x release/assets/*.AppImage
+          APPIMAGE_EXTRACT_AND_RUN=1 release/assets/*.AppImage --status 2> /tmp/status-error && exit 1 || grep -q 'Background service is unavailable' /tmp/status-error
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --verify-tag --prerelease --title "Internet Swap ${GITHUB_REF_NAME#v}" --notes-file "release/${GITHUB_REF_NAME#v}.md" release/assets/*

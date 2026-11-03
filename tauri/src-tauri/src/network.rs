@@ -4,8 +4,33 @@ use std::{
     process::{Command, Stdio},
 };
 
+/// AppImage library paths belong to the GUI, never to host NetworkManager/curl.
+pub fn host_command(program: &str) -> Command {
+    let mut command = Command::new(program);
+    for key in [
+        "LD_LIBRARY_PATH",
+        "LD_PRELOAD",
+        "GTK_PATH",
+        "GIO_EXTRA_MODULES",
+        "GDK_PIXBUF_MODULE_FILE",
+        "GI_TYPELIB_PATH",
+    ] {
+        command.env_remove(key);
+    }
+    if let (Some(bundle), Some(path)) = (std::env::var_os("APPDIR"), std::env::var_os("PATH")) {
+        let bundle = std::path::PathBuf::from(bundle);
+        let paths = std::env::split_paths(&path)
+            .filter(|p| !p.starts_with(&bundle))
+            .collect::<Vec<_>>();
+        if let Ok(path) = std::env::join_paths(paths) {
+            command.env("PATH", path);
+        }
+    }
+    command
+}
+
 pub fn run(program: &str, args: &[&str]) -> Result<String, String> {
-    let output = Command::new("timeout")
+    let output = host_command("timeout")
         .args(["--kill-after=2", "40", program])
         .args(args)
         .env("LC_ALL", "C")
@@ -208,7 +233,7 @@ pub fn measure(iface: &str) -> Measurement {
         let result = if upload {
             // 256 KiB request body, generated in memory and passed on stdin, never a secret.
             use std::io::Write;
-            let mut child = Command::new("curl")
+            let mut child = host_command("curl")
                 .args([
                     "--interface",
                     iface,

@@ -35,7 +35,7 @@ export default function Home() {
             an eye on it.
           </p>
           <div className="actions">
-            <a className="primary" href={`${repo}/releases/tag/v0.1.0`}>
+            <a className="primary" href={`${repo}/releases/tag/v0.1.1`}>
               Get Internet Swap <span aria-hidden="true">↓</span>
             </a>
             <a href="#how-it-works">

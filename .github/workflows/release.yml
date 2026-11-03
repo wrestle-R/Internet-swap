@@ -45,6 +45,8 @@ jobs:
         run: |
           chmod +x release/assets/*.AppImage
           APPIMAGE_EXTRACT_AND_RUN=1 release/assets/*.AppImage --status 2> /tmp/status-error && exit 1 || grep -q 'Background service is unavailable' /tmp/status-error
+      - name: Verify packaged daemon and host command isolation
+        run: APPIMAGE_EXTRACT_AND_RUN=1 python3 tauri/tests/daemon_integration.py release/assets/*.AppImage
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}

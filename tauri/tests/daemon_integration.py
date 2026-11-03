@@ -79,7 +79,7 @@ class Integration(unittest.TestCase):
   self.assertFalse(b['measurement']['healthy']);self.assertIsNone(b['measurement']['download'])
  def test_failed_candidate_rolls_back_then_recovers(self):
   (self.root/'fail').write_text('ab')
-  self.wait(lambda:(self.root/'active').read_text()=='c' and self.status()['current'].startswith('cccc'),25)
+  self.wait(lambda:(self.root/'active').read_text()=='c' and self.status()['current'].startswith('cccc') and any('Switched to a working' in e['text'] for e in self.status()['events']),25)
   calls=(self.root/'calls').read_text()
   self.assertIn("'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'",calls)
   self.assertIn("'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'",calls)
